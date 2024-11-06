@@ -23,6 +23,9 @@ public class Cliente extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Configuración de la ventana principal
+
+//**Adaptar a javafx**, archivo externo fxml de cliente 
+
         primaryStage.setTitle("Juego del Ahorcado");
 
         tfPalabra = new TextField();
