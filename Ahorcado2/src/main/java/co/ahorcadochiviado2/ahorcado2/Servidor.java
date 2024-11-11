@@ -7,7 +7,34 @@ import java.util.concurrent.*;
 
 public class Servidor implementa runnable{
 
-    private static List<PrintWriter> clientes = new ArrayList<>();
+    public ArrayList<Socket> pantallas;
+    public ServerSocket srv;
+
+    public void notificarPantalla(String turno) throws Exception{
+        for(int i =0 ;i < pantallas.size(); i++){
+             DataOutputStream dos = new DataOutputStream(pantallas.get(i).getOutputStream());
+        dos.writeUTF(palabra);
+        }
+//imprime la palabra para cada pantalla.
+
+ @Override
+    public void run() {
+        try {
+            srv = new ServerSocket(5500);
+             pantallas = new ArrayList<Socket>();
+        while (true){
+                      
+            pantallas.add(srv.accept());
+            DataInputStream dis = new DataInputStream(pantallas.getLast().getInputStream());
+            System.out.println(dis.readUTF());
+        }
+        } catch (IOException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+// iniciar server
+
+   
     private static String palabra;
     private static StringBuilder palabraAleatoria;
     private static Set<Character> letrasUsadas = new HashSet<>();
