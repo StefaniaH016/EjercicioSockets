@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class Servidor {
+public class Servidor implementa runnable{
 
     private static List<PrintWriter> clientes = new ArrayList<>();
     private static String palabra;
