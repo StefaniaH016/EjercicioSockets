@@ -19,10 +19,12 @@ public class Servidor implementa runnable{
 
         // Seleccionar una palabra aleatoria
         ArrayList<String> palabras = new ArrayList<>(Arrays.asList("casa", "pedorrera", "avion", "electromagnetismo", "hipotenusa", "arquitectura"));
+
+public static void seleccionarPalabra( ArrayList<String> palabras) {
         Random random= new Random();
         palabra = palabras.get(random.nextInt(palabras.size()));
         palabraAleatoria = new StringBuilder("*".repeat(palabra.length()));
-
+}
         while (true) {
             // Esperar a un nuevo cliente
             Socket clienteSocket = servidor.accept();
