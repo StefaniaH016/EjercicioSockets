@@ -1,143 +1,137 @@
 package co.ahorcadochiviado2.ahorcado2;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.*;
 
-public class Servidor implementa runnable{
-
-    public ArrayList<Socket> pantallas;
-    public ServerSocket srv;
-
-    public void notificarPantalla(String turno) throws Exception{
-        for(int i =0 ;i < pantallas.size(); i++){
-             DataOutputStream dos = new DataOutputStream(pantallas.get(i).getOutputStream());
-        dos.writeUTF(palabra);
-        }
-//imprime la palabra para cada pantalla.
-
- @Override
-    public void run() {
-        try {
-            srv = new ServerSocket(5500);
-             pantallas = new ArrayList<Socket>();
-        while (true){
-                      
-            pantallas.add(srv.accept());
-            DataInputStream dis = new DataInputStream(pantallas.getLast().getInputStream());
-            System.out.println(dis.readUTF());
-        }
-        } catch (IOException ex) {
-            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-// iniciar server
-
-   
-    private static String palabra;
-    private static StringBuilder palabraAleatoria;
-    private static Set<Character> letrasUsadas = new HashSet<>();
-
-    public static void main(String[] args) throws IOException {
-
-        ServerSocket servidor = new ServerSocket(1500);
-        System.out.println("Servidor iniciado... Esperando jugadores...");
-
-        // Seleccionar una palabra aleatoria
-        ArrayList<String> palabras = new ArrayList<>(Arrays.asList("casa", "pedorrera", "avion", "electromagnetismo", "hipotenusa", "arquitectura"));
-
-public static void seleccionarPalabra( ArrayList<String> palabras) {
-        Random random= new Random();
-        palabra = palabras.get(random.nextInt(palabras.size()));
-        palabraAleatoria = new StringBuilder("*".repeat(palabra.length()));
-}
-        while (true) {
-            // Esperar a un nuevo cliente
-            Socket clienteSocket = servidor.accept();
-            System.out.println("Nuevo jugador conectado");
-            PrintWriter out = new PrintWriter(clienteSocket.getOutputStream(), true);
-            clientes.add(out);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
-
-            // Crear hilo para manejar al cliente
-            new Thread(new JugadorHandler(clienteSocket, in, out)).start();
-
-            // Enviar la palabra enmascarada a todos los jugadores
-            enviarPalabra();
-        }
-    }
-
-    private static void enviarPalabra() {
-        for (PrintWriter cliente : clientes) {
-            cliente.println(palabraAleatoria.toString());
-        }
-    }
-
-    // Método para verificar la letra enviada
-    private static synchronized void procesarLetra(char letra) {
-        if (!letrasUsadas.contains(letra)) {
-            letrasUsadas.add(letra);
-            boolean letraCorrecta = false;
-
-            for (int i = 0; i < palabra.length(); i++) {
-                if (palabra.charAt(i) == letra) {
-                    palabraAleatoria.setCharAt(i, letra);
-                    letraCorrecta = true;
-                }
+public class Servidor implements Runnable {
+    private JFrame frame;
+    private JButton btnEnviarPalabra;
+    private JLabel lblPalabra;
+    private String palabraOculta;
+    private String palabraOriginal;
+    private List<String> listaPalabras;
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private BufferedReader input;
+    private PrintWriter output;
+    
+    // Constructor
+    public Servidor() {
+        listaPalabras = new ArrayList<>();
+        listaPalabras.add("JAVA");
+        listaPalabras.add("REDES");
+        listaPalabras.add("ALGORITMO");
+        listaPalabras.add("PROGRAMACION");
+        
+        // Configuración de la interfaz gráfica
+        frame = new JFrame("Servidor de Juego");
+        frame.setSize(400, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+        
+        lblPalabra = new JLabel("Palabra: ");
+        frame.add(lblPalabra);
+        
+        btnEnviarPalabra = new JButton("Enviar Palabra");
+        btnEnviarPalabra.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                enviarPalabra();
             }
-
-            if (!letraCorrecta) {
-                System.out.println("Letra incorrecta: " + letra);
-            }
-
-            // Verificar si la palabra fue adivinada
-            if (palabraAleatoria.toString().equals(palabra)) {
-                System.out.println("¡Palabra adivinada!");
-                for (PrintWriter cliente : clientes) {
-                    cliente.println("¡Felicidades, la palabra es: " + palabra);
-                }
-                cerrarConexiones();
-            }
-
-            // Enviar la palabra actualizada a todos los clientes
-            enviarPalabra();
-        }
+        });
+        frame.add(btnEnviarPalabra);
+        
+        frame.setVisible(true);
     }
-
-    private static void cerrarConexiones() {
-        for (PrintWriter cliente : clientes) {
-            cliente.close();
-        }
-        clientes.clear();
-    }
-
-    // Maneja la conexión de cada jugador
-    static class JugadorHandler implements Runnable {
-        private Socket clienteSocket;
-        private BufferedReader in;
-        private PrintWriter out;
-
-        public JugadorHandler(Socket socket, BufferedReader in, PrintWriter out) {
-            this.clienteSocket = socket;
-            this.in = in;
-            this.out = out;
-        }
-
-        @Override
-        public void run() {
+    
+    // Método para enviar una palabra al azar
+    public void enviarPalabra() {
+        // Elegir una palabra al azar
+        Random rand = new Random();
+        palabraOriginal = listaPalabras.get(rand.nextInt(listaPalabras.size()));
+        
+        // Ocultar la palabra (reemplazar letras por '*')
+        palabraOculta = palabraOriginal.replaceAll(".", "*");
+        
+        // Mostrar la palabra oculta en la interfaz
+        lblPalabra.setText("Palabra: " + palabraOculta);
+        
+        // Notificar al cliente
+        if (clientSocket != null && !clientSocket.isClosed()) {
             try {
-                out.println("¡Bienvenido al juego del Ahorcado!");
-                while (true) {
-                    String input = in.readLine();
-                    if (input != null && input.length() == 1) {
-                        char letra = input.charAt(0);
-                        procesarLetra(letra);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+                output.println(palabraOculta); // Enviar la palabra oculta al cliente
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
+    }
+
+    // Método para verificar si una letra enviada por el cliente es correcta
+    public void verificarLetra(char letra) {
+        StringBuilder nuevaPalabra = new StringBuilder(palabraOculta);
+        boolean letraCorrecta = false;
+        
+        // Recorrer la palabra original para encontrar coincidencias
+        for (int i = 0; i < palabraOriginal.length(); i++) {
+            if (palabraOriginal.charAt(i) == letra) {
+                nuevaPalabra.setCharAt(i, letra); // Reemplazar '*' por la letra correcta
+                letraCorrecta = true;
+            }
+        }
+
+        palabraOculta = nuevaPalabra.toString();
+        lblPalabra.setText("Palabra: " + palabraOculta);
+
+        // Enviar la actualización de la palabra oculta al cliente
+        if (clientSocket != null && !clientSocket.isClosed()) {
+            try {
+                output.println(palabraOculta); // Enviar la palabra oculta actualizada al cliente
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        // Si no hay asteriscos, la palabra está completa
+        if (!palabraOculta.contains("*")) {
+            JOptionPane.showMessageDialog(frame, "¡La palabra ha sido adivinada!");
+        }
+    }
+
+    // Método para manejar la conexión del cliente
+    public void conectarCliente() {
+        try {
+            serverSocket = new ServerSocket(12345);
+            System.out.println("Esperando cliente...");
+            clientSocket = serverSocket.accept();
+            System.out.println("Cliente conectado");
+
+            // Crear streams para la comunicación
+            input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            output = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            // Leer las letras enviadas por el cliente
+            String letra;
+            while ((letra = input.readLine()) != null) {
+                System.out.println("Letra recibida: " + letra);
+                verificarLetra(letra.charAt(0)); // Verificar la letra enviada por el cliente
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        conectarCliente();
+    }
+
+    public static void main(String[] args) {
+        Servidor servidor = new Servidor();
+        // Iniciar el servidor en un hilo aparte
+        Thread serverThread = new Thread(servidor);
+        serverThread.start();
     }
 }
