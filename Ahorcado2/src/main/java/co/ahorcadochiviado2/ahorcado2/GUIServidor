@@ -11,13 +11,13 @@ import java.util.logging.Logger;
  *
  * @author tefa
  */
-public class GUIServer extends javax.swing.JFrame {
+public class GUIServidor extends javax.swing.JFrame {
 
     /**
-     * Creates new form GUIServer
+     * Creates new form GUIServidor
      */
     Servidor srv;
-    public GUIServer() {
+    public GUIServidor() {
         initComponents();
         srv = new Servidor();
         new Thread(srv).start();
