@@ -21,12 +21,12 @@ public class Cliente extends Observable implements Runnable {
     // Constructor
     public Cliente() {
         // Configuración de la interfaz gráfica
-        frame = new JFrame("Cliente - Juego de Palabras");
+        frame = new JFrame("Cliente - Juego de Ahorcado");
         frame.setSize(400, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout());
 
-        lblPalabra = new JLabel("Palabra Oculta: ");
+        lblPalabra = new JLabel("Palabra Oculta ");
         frame.add(lblPalabra);
 
         txtLetra = new JTextField(2);
@@ -80,7 +80,7 @@ public class Cliente extends Observable implements Runnable {
 
     // Método para actualizar la interfaz gráfica
     public void actualizarInterfaz() {
-        lblPalabra.setText("Palabra Oculta: " + palabraOculta);
+        lblPalabra.setText(palabraOculta);
     }
 
     @Override
