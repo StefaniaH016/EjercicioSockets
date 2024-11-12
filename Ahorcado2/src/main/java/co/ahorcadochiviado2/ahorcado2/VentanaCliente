@@ -34,9 +34,14 @@ public class VentanaCliente extends javax.swing.JFrame implements Observer {
 
         jLabel2 = new javax.swing.JLabel();
 
+        jButton2 = new javax.swing.JButton();
+
+        jTextField1 = new javafx.swing.JTextField();
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel2.setText("palabra");
+        jButton2.setText("enviar letra");
+        jTextField1.setText("letra");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
