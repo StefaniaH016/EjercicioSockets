@@ -100,6 +100,8 @@ public class Servidor implements Runnable {
         // Si no hay asteriscos, la palabra está completa
         if (!palabraOculta.contains("*")) {
             JOptionPane.showMessageDialog(frame, "¡La palabra ha sido adivinada!");
+
+clientSocket.close();
         }
     }
 
