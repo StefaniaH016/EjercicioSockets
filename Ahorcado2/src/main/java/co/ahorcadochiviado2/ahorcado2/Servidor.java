@@ -13,7 +13,7 @@ public class Servidor implements Runnable {
     private JLabel lblPalabra;
     private String palabraOculta;
     private String palabraOriginal;
-    private List<String> listaPalabras;
+    private ArrayList<String> listaPalabras;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private BufferedReader input;
@@ -22,10 +22,10 @@ public class Servidor implements Runnable {
     // Constructor
     public Servidor() {
         listaPalabras = new ArrayList<>();
-        listaPalabras.add("conejo");
-        listaPalabras.add("perro");
-        listaPalabras.add("observable");
-        listaPalabras.add("clanmamasita");
+        listaPalabras.add("CONEJO");
+        listaPalabras.add("PERRO");
+        listaPalabras.add("OBSERVABLE");
+        listaPalabras.add("CLANMAMASITA");
         
         // Configuración de la interfaz gráfica
         frame = new JFrame("Servidor de Ahorcado");
@@ -82,6 +82,9 @@ public class Servidor implements Runnable {
             }
         }
 
+        if (letraCorrecta == false){
+            System.out.println("la letra ingresada no esta en la palabra");
+        }
         palabraOculta = nuevaPalabra.toString();
         lblPalabra.setText(palabraOculta);
 
