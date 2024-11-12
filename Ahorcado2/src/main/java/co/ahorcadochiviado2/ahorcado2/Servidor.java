@@ -22,18 +22,18 @@ public class Servidor implements Runnable {
     // Constructor
     public Servidor() {
         listaPalabras = new ArrayList<>();
-        listaPalabras.add("JAVA");
-        listaPalabras.add("REDES");
-        listaPalabras.add("ALGORITMO");
-        listaPalabras.add("PROGRAMACION");
+        listaPalabras.add("conejo");
+        listaPalabras.add("perro");
+        listaPalabras.add("observable");
+        listaPalabras.add("clanmamasita");
         
         // Configuración de la interfaz gráfica
-        frame = new JFrame("Servidor de Juego");
+        frame = new JFrame("Servidor de Ahorcado");
         frame.setSize(400, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout());
         
-        lblPalabra = new JLabel("Palabra: ");
+        lblPalabra = new JLabel("Palabra");
         frame.add(lblPalabra);
         
         btnEnviarPalabra = new JButton("Enviar Palabra");
@@ -57,7 +57,7 @@ public class Servidor implements Runnable {
         palabraOculta = palabraOriginal.replaceAll(".", "*");
         
         // Mostrar la palabra oculta en la interfaz
-        lblPalabra.setText("Palabra: " + palabraOculta);
+        lblPalabra.setText(palabraOculta);
         
         // Notificar al cliente
         if (clientSocket != null && !clientSocket.isClosed()) {
@@ -83,7 +83,7 @@ public class Servidor implements Runnable {
         }
 
         palabraOculta = nuevaPalabra.toString();
-        lblPalabra.setText("Palabra: " + palabraOculta);
+        lblPalabra.setText(palabraOculta);
 
         // Enviar la actualización de la palabra oculta al cliente
         if (clientSocket != null && !clientSocket.isClosed()) {
